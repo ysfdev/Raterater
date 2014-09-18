@@ -1,5 +1,5 @@
 /*
- *  Raterater 1.0.2
+ *  Raterater 1.0.3
  *  License: MIT - http://www.opensource.org/licenses/mit-license.php
  *  Author: Bain Mullins - http://bainweb.com
  */
