@@ -1,0 +1,28 @@
+{
+	"name": "raterater",
+	"title": "Raterater",
+	"description": "jQuery 5 star rating plugin based on Font Awesome icons that allows arbitrary star fractions, variable star sizes, and CSS colors",
+	"version": "1.0.0",
+	"dependencies": {
+		"jquery": ">=1.4.1",
+		"font-awesome": ">= 4.2.0"
+	},
+	"keywords": [
+		"rating",
+		"star",
+		"rate",
+		"jQuery"
+	],
+	"author": {
+		"name": "Bain Mullins",
+		"url": "http://bainweb.com",
+		"email": "bain@bainweb.com"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		}
+	],
+	"homepage": "http://github.com/bainmullins/Raterater"
+}

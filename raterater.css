@@ -1,0 +1,41 @@
+/* change these if you want */
+.raterater-layer {
+    font-size:20px; /* star size */
+}
+.raterater-bg-layer {
+    color: rgba( 0, 0, 0, 0.25 );
+}
+.raterater-hover-layer {
+    color: rgba( 255, 255, 0, 0.75 );
+}
+.raterater-hover-layer.rated { /* after the user selects a rating */
+    color: rgba( 255, 255, 0, 1 );
+}
+.raterater-rating-layer {
+    color: rgba( 255, 155, 0, 0.50 );
+}
+.raterater-outline-layer {
+    color: rgba( 0, 0, 0, 0.25 );
+}
+
+/* don't change these - you might break something.. */
+.raterater-layer {
+    position:absolute;
+    top:0px;
+    left:0px;
+}
+.raterater-hover-layer {
+    display:none;
+}
+.raterater-cover-layer {
+    position:absolute;
+    top:0px;
+    left:0px
+}
+.raterater-hover-layer i,
+.raterater-rating-layer i {
+    width:0px;
+    overflow:hidden;
+    display:block;
+    position:absolute;
+}
