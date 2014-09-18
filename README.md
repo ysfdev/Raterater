@@ -21,8 +21,15 @@ Write a callbaack function for handling the rating event
 ```javascript
 function rateAlert(id, rating)
 {
-    alert( 'Rating for '+id+' is '+rating+' stars!' );
+    alert( 'Rating for ' + id + ' is ' + rating + ' stars!' );
 }
+```
+
+Create any number of div elements with unique data-id attributes and optional data-rating attributes
+
+```html
+<div class="ratebox" data-id="1" data-rating="2.2"></div>
+<div class="ratebox" data-id="2" data-rating="3.6"></div>
 ```
 
 Initialize Raterater
