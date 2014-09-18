@@ -2,7 +2,7 @@
 	"name": "raterater",
 	"title": "Raterater",
 	"description": "jQuery 5 star rating plugin based on Font Awesome icons that allows arbitrary star fractions, variable star sizes, and CSS colors",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"dependencies": {
 		"jquery": ">=1.4.1",
 		"font-awesome": ">= 4.2.0"
