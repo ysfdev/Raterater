@@ -43,7 +43,7 @@ See demo.html for an example.
 ## Options
 
 Attribute|Default|Values|Description
-:-:|:-:|:-:|-
+:-------:|:-----:|:----:|:----------
 submitFunction | 'submitRating' | String | A function name that will be called when the user selected a rating. The function should take 2 arguments: id and rating. The id is the data-id of the rating div and the rating is a float representation of the number of stars the user selected.
 allowChange | false | Boolean | If set to true, allows the user to change his rating. the submitFunction callback will be called again, so be prepared to handle this in your code.
 
