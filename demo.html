@@ -7,9 +7,21 @@
 <link href="raterater.css" rel="stylesheet"/>
 
 <style>
-/* Giant Stars! */
-.raterater-layer {
-    font-size:100px;
+/* Override star colors */
+.raterater-bg-layer {
+    color: rgba( 0, 0, 0, 0.25 );
+}
+.raterater-hover-layer {
+    color: rgba( 255, 255, 0, 0.75 );
+}
+.raterater-hover-layer.rated {
+    color: rgba( 255, 255, 0, 1 );
+}
+.raterater-rating-layer {
+    color: rgba( 255, 155, 0, 0.75 );
+}
+.raterater-outline-layer {
+    color: rgba( 0, 0, 0, 0.25 );
 }
 </style>
 
@@ -35,7 +47,13 @@ function rateAlert(id, rating)
 /* Here we initialize raterater on our rating boxes
  */
 $(function() {
-    $( '.ratebox' ).raterater( { submitFunction: 'rateAlert', allowChange: true } );
+    $( '.ratebox' ).raterater( { 
+        submitFunction: 'rateAlert', 
+        allowChange: true,
+        starWidth: 100,
+        spaceWidth: 10,
+        numStars: 5
+    } );
 });
 
 </script>

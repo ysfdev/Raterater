@@ -1,5 +1,5 @@
 /*
- *  Raterater 1.0.3
+ *  Raterater 1.1.0
  *  License: MIT - http://www.opensource.org/licenses/mit-license.php
  *  Author: Bain Mullins - http://bainweb.com
  */
@@ -8,41 +8,33 @@
     var data = {};
     var opts = {};
     var elems = null;
-	$.fn.raterater = function(options) {
+    $.fn.raterater = function(options) {
 
         /* Default options
          */
         $.fn.raterater.defaults = {
             submitFunction: 'submitRating', // this function will be called when a rating is chosen
             allowChange: false, // allow the user to change their mind after they have submitted a rating
+            starWidth: 20, // width of the stars in pixels
+            spaceWidth: 5, // spacing between stars in pixels
+            numStars: 5
         };
 
         opts = $.extend( {}, $.fn.raterater.defaults, options );
+        opts.width = opts.numStars * ( opts.starWidth + opts.spaceWidth ); // total rating div width
+        opts.starAspect = 0.9226; // aspect ratio of the font awesome stars
 
         elems = this;
 
-        /* Initialize what we can while we wait for FontAwesome to load
+        /* First we create ze elements
          */
         init();
 
-        /* We need to wait for font awesome to load before we proceed
-         * Because we have to absolute position some of the stars,
-         * It is important that they are rendered before we calculate their positions
+        /* Zen we position ze elements
          */
-        setInterval( waitForFonts, 100 );
+        initializePositions();
 
         return this;
-    }
-
-    /* Check is Font Awesome is loaded. 
-     * If it is, proceed with initialization.
-     */
-    function waitForFonts() {
-
-        if( $('.raterater-rating-layer').find('i.fa').css('font-family') === 'FontAwesome' ) {
-            clearInterval(waitForFonts);
-            initializePositions();
-        }
     }
 
     function init() {
@@ -62,10 +54,6 @@
              */
             data[id] = {
                 state: 'inactive', // inactive, hover, or rated
-                width: 10, // width of the rating box
-                star_width: 0, // width of an individual star
-                space_width: 0, // width of the gap between stars
-                num_stars: 5 // the number of stars in the box
             };
 
             /* Make our wrapper relative if it is static so we can position children absolutely
@@ -82,28 +70,24 @@
              * Layer 2 shows the bright filled stars that represent the current user's rating
              * Layer 3 shows the bright filled stars that represent the item's rating
              * Layer 4 shows the outline stars and is just for looks
+             * Layer 5 covers the widget and mainly exists to keep event.offsetX from being ruined by child elements
              */
-            $.each( [ 'bg', 'hover', 'rating', 'outline' ], function() {
+            $.each( [ 'bg', 'hover', 'rating', 'outline', 'cover' ], function() {
                 $this.append(' <div class="raterater-layer raterater-' + this + '-layer"></div>' );
             });
 
             /* Fill the layers with stars
              */
-            for( var i = 0; i < data[id].num_stars; i++ ) {
+            for( var i = 0; i < opts.numStars; i++ ) {
                 $this.children( '.raterater-bg-layer' ).first()
-                    .append( '<i class="fa fa-star"></i>&nbsp;' );
+                    .append( '<i class="fa fa-star"></i>' );
                 $this.children( '.raterater-outline-layer' ).first()
-                    .append( '<i class="fa fa-star-o"></i>&nbsp;' );
+                    .append( '<i class="fa fa-star-o"></i>' );
                 $this.children( '.raterater-hover-layer' ).first()
                     .append( '<i class="fa fa-star"></i>' );
                 $this.children( '.raterater-rating-layer' ).first()
                     .append( '<i class="fa fa-star"></i>' );
             }
-
-            /* This is a forth layer that exists only to keep event.offsetX 
-             * from being ruined by child elements
-             */
-            $this.append( '<div class="raterater-cover-layer"></div>' );
 
             /* Register mouse event callbacks
              */
@@ -114,47 +98,30 @@
     }
 
     function initializePositions() {
-        
         elems.each( function() {
            
             var $this = $( this );
             var id = dataId( $this );
         
-            /* Get the width of spacing, stars, and wrapper for later calculations
+            /* Set the width and height of the raterater wrapper and layers
              */
-            data[id].star_width = $this.children( 'div' ).first().children( 'i' ).first().width();
-            var p1 = $this.children( 'div' ).first().children( 'i' ).eq(0).position().left;
-            var p2 = $this.children( 'div' ).first().children( 'i' ).eq(1).position().left;
-            data[id].space_width = p2 - p1 - data[id].star_width;
-            data[id].width = data[id].num_stars * data[id].star_width;
-            data[id].width += data[id].num_stars * data[id].space_width;
+            var width = opts.width + 'px';
+            var height = Math.floor( opts.starWidth / opts.starAspect ) + 'px';
+            $this.css( 'width', width )
+                .css( 'height', height );
+            $this.find( '.raterater-layer' ).each(function(){
+                $( this ).css( 'width', width )
+                    .css( 'height', height );
+            });
 
-            /* Set the width and height of the raterater wrapper and the cover layer
+            /* Absolutely position the stars (necessary for partial stars)
              */
-            $this.css( 'width', data[id].width + 'px' )
-                .css( 'height', $this.children( 'div' ).first().height() );
-            $this.find( '.raterater-cover-layer' )
-                .css( 'width', $this.width() )
-                .css( 'height', $this.height() );
-
-            /* The second and third layers are trickier
-             * The stars must be absolutely positioned so that we can display partial stars
-             */
-            var $target = $this.children( '.raterater-bg-layer' ).first().children( 'i' ).eq( 0 );
-            var p = $target.position();
-            for( var i = 0; i < data[id].num_stars; i++ ) {
-
-                /* shows the user's rating on hover 
-                 */
-                $this.children( '.raterater-hover-layer' ).first().children( 'i' ).eq( i )
-                    .css( 'top', p.top + 'px' )
-                    .css( 'left', i * (data[id].star_width + data[id].space_width) + 'px' );
-
-                /* shows the established rating from the data-rating attribute 
-                 */
-                $this.children( '.raterater-rating-layer' ).first().children( 'i' ).eq( i )
-                    .css( 'top', p.top + 'px' )
-                    .css( 'left', i * (data[id].star_width + data[id].space_width) + 'px' );
+            for( var i = 0; i < opts.numStars; i++ ) {
+                $.each( [ 'bg', 'hover', 'rating', 'outline' ], function() {
+                    $this.children( '.raterater-' + this + '-layer' ).first().children( 'i' ).eq( i )
+                        .css( 'left', i * ( opts.starWidth + opts.spaceWidth ) + 'px' )
+                        .css( 'font-size', Math.floor( opts.starWidth / opts.starAspect ) + 'px');
+                });
             }
 
             /* show the item's current rating on the raterater-rating-layer
@@ -197,16 +164,17 @@
      * (This is only compicated because of the spacing between stars)
      */
     function calculateStars(x, id) {
+
         /* Whole star = floor( x / ( star_width + space_width ) ) 
          */
-        var whole_stars = Math.floor( x / ( data[id].star_width + data[id].space_width ) );
+        var whole_stars = Math.floor( x / ( opts.starWidth + opts.spaceWidth ) );
 
         /* Partial star = max( 1, ( x - whole_stars * ( star_width + space_width ) ) / star_width )
          */
-        var partial_star = x - whole_stars * ( data[id].star_width + data[id].space_width );
-        if( partial_star > data[id].star_width )
-            partial_star = data[id].star_width;
-        partial_star /= data[id].star_width;
+        var partial_star = x - whole_stars * ( opts.starWidth + opts.spaceWidth );
+        if( partial_star > opts.starWidth )
+            partial_star = opts.starWidth;
+        partial_star /= opts.starWidth;
 
         /* Store our result in the data object
          */
@@ -223,17 +191,17 @@
          */
         for( var i = 0; i < whole; i++ ) {
             $layer.find( 'i' ).eq( i )
-                .css( 'width', data[id].star_width + 'px' );
+                .css( 'width', opts.starWidth + 'px' );
         }
 
         /* highlight the partial star
          */
         $layer.find( 'i' ).eq( whole )
-            .css( 'width', data[id].star_width * partial + 'px' );
+            .css( 'width', opts.starWidth * partial + 'px' );
 
         /* clear the extra stars
          */
-        for( var i = whole+1; i < data[id].num_stars; i++) {
+        for( var i = whole+1; i < opts.numStars; i++) {
             $layer.find( 'i' ).eq( i )
                 .css( 'width', '0px' );
         }
@@ -242,7 +210,7 @@
     /* Highlight the hover layer stars
      * This is the callback for the mousemove event
      */
-	function hiliteStarsHover(e) {
+    function hiliteStarsHover(e) {
         var id = dataId( $( e.target ).parent() );
         
         /* Leave it alone, we aren't hovering
@@ -251,9 +219,16 @@
             return;
         }
 
-        /* Calculate how many stars to show from the mouse position
+        /* Get the mouse offsetX
          */
         var x = e.offsetX;
+
+        /* Firefox requires a pageX hack
+         */
+        if(x === undefined) {
+            x = e.pageX - $( e.target ).offset().left;
+        }
+
         data[id].stars = calculateStars( x, id );
 
         /* Find the layer element
@@ -263,12 +238,12 @@
         /* Call the more generic highlighting function
          */
         hiliteStars( $layer, data[id].whole_stars_hover, data[id].partial_star_hover );
-	}
+    }
 
     /* Active this rating box
      * This is the callback for the mouseenter event 
      */
-	function mouseEnter(e) {
+    function mouseEnter(e) {
         var id = dataId( $( e.target ).parent() );
 
         /* Leave it alone, we have already rated this item
@@ -279,18 +254,18 @@
 
         /* set the state to 'hover'
          */
-		data[id].state = 'hover';
+        data[id].state = 'hover';
 
         /* show the hover layer and hide the rating layer
          */
         $( e.target ).parent().children( '.raterater-rating-layer' ).first().css( 'display', 'none' );
         $( e.target ).parent().children( '.raterater-hover-layer' ).first().css( 'display','block' );
-	}
+    }
 
     /* Deactivate this rating box
      * This is the callback for the mouseleave event 
      */
-	function mouseLeave(e) {
+    function mouseLeave(e) {
         var id = dataId( $( e.target ).parent() );
 
         /* Leave it alone, we have already rated this item
@@ -301,13 +276,13 @@
 
         /* set the state to 'inactive'
          */
-        data[id].state = 'inative';
+        data[id].state = 'inactive';
 
         /* hide the hover layer and show the rating layer
          */
         $( e.target ).parent().children( '.raterater-hover-layer' ).first().css( 'display', 'none' );
         $( e.target ).parent().children( '.raterater-rating-layer' ).first().css( 'display','block' );
-	}
+    }
 
     /* Shorthand function to get the data-id of an element
      */
