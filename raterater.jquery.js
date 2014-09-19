@@ -1,5 +1,5 @@
 /*
- *  Raterater 1.1.0
+ *  Raterater 1.1.1
  *  License: MIT - http://www.opensource.org/licenses/mit-license.php
  *  Author: Bain Mullins - http://bainweb.com
  */
@@ -59,7 +59,11 @@
             /* Make our wrapper relative if it is static so we can position children absolutely
              */
             if( $this.css( 'position' ) === 'static' )
-                $this.css( 'position', 'relative' )
+                $this.css( 'position', 'relative' );
+
+            /* Add class raterater-wrapper
+             */
+            $this.addClass('raterater-wrapper');
 
             /* Clear out anything inside so we can append the relevent children
              */

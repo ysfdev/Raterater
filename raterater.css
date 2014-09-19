@@ -16,6 +16,9 @@
 }
 
 /* don't change these - you might break something.. */
+.raterater-wrapper {
+    overflow:visible;
+}
 .raterater-layer,
 .raterater-layer i {
     display: block;
