@@ -17,7 +17,8 @@
             allowChange: false, // allow the user to change their mind after they have submitted a rating
             starWidth: 20, // width of the stars in pixels
             spaceWidth: 5, // spacing between stars in pixels
-            numStars: 5
+            numStars: 5,
+            isStatic: false
         };
 
         opts = $.extend( {}, $.fn.raterater.defaults, options );
@@ -95,9 +96,11 @@
 
             /* Register mouse event callbacks
              */
-            $this.find( '.raterater-cover-layer' ).hover( mouseEnter, mouseLeave );
-            $this.find( '.raterater-cover-layer' ).mousemove( hiliteStarsHover );
-            $this.find( '.raterater-cover-layer' ).click( rate );
+            if(!opts.isStatic){
+            	$this.find( '.raterater-cover-layer' ).hover( mouseEnter, mouseLeave );
+            	$this.find( '.raterater-cover-layer' ).mousemove( hiliteStarsHover );
+            	$this.find( '.raterater-cover-layer' ).click( rate );
+        	}
         });
     }
 
