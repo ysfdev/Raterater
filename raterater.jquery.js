@@ -7,18 +7,27 @@
 ;(function( $ ) {
     var data = {};
     var opts = {};
+    
+    var MODE_INPUT = 'input';
+    var MODE_CALLBACK = 'callback';
+    
+    var object;
+    
     var elems = null;
+    var inputCounter = 0;
+    
     $.fn.raterater = function(options) {
 
         /* Default options
          */
         $.fn.raterater.defaults = {
-            submitFunction: 'submitRating', // this function will be called when a rating is chosen
+            submitFunction: '', // this function will be called when a rating is chosen
             allowChange: false, // allow the user to change their mind after they have submitted a rating
             starWidth: 20, // width of the stars in pixels
             spaceWidth: 5, // spacing between stars in pixels
             numStars: 5,
-            isStatic: false
+            isStatic: false,
+            mode: MODE_CALLBACK,
         };
 
         opts = $.extend( {}, $.fn.raterater.defaults, options );
@@ -38,24 +47,39 @@
         return this;
     }
 
-    function init() {
-        
+    function setValue (id,stars){
+    	
+    	$('.raterater-input[data-id="'+ id + '"]').data('input').val(stars);   	
+    }
+    
+    function init() {        
         elems.each( function() {
-        
-            var $this = $( this );
-            var id = dataId( $this );
-
-            /* Uh oh... We really need a data-id or bad things happen
-             */
-            if( !id ) {
-                throw "Error: Each raterater element needs a unique data-id attribute.";
-            }
-
-            /* This is where we store our important data for each rating box
-             */
-            data[id] = {
-                state: 'inactive', // inactive, hover, or rated
-            };
+            var $this = $( this );       
+            
+            if(opts.mode == MODE_INPUT && ($this.prop("tagName") == 'INPUT' || $this.prop("tagName") == 'SELECT') ){       	
+            	var iId = 'input-' +(inputCounter++);
+            	var outer = $('<div class="raterater-input"></div>').attr('data-id', iId).attr('data-rating',$this.val()).data('input',$this);
+            	$this.attr('data-id', iId).attr('data-id', iId).attr('data-rating',$this.val()).data('input',$this).after(outer).hide();
+            	object = $this = outer;                	            	
+            }          
+            
+            object = $this;
+	       	 
+        	var id = dataId( $this );
+	
+	         /* Uh oh... We really need a data-id or bad things happen
+	          */
+	         if( !id ) {
+	             throw "Error: Each raterater element needs a unique data-id attribute.";
+	         }
+	
+	         /* This is where we store our important data for each rating box
+	          */
+	         data[id] = {
+	             state: 'inactive', // inactive, hover, or rated
+	         };
+	        	
+	       
 
             /* Make our wrapper relative if it is static so we can position children absolutely
              */
@@ -69,6 +93,7 @@
             /* Clear out anything inside so we can append the relevent children
              */
             $this.html( '' );
+            
 
             /* We have 4 div children here as different star layers
              * Layer 1 contains the dull filled stars as a background
@@ -101,13 +126,20 @@
             	$this.find( '.raterater-cover-layer' ).mousemove( hiliteStarsHover );
             	$this.find( '.raterater-cover-layer' ).click( rate );
         	}
+      
         });
     }
 
     function initializePositions() {
         elems.each( function() {
-           
-            var $this = $( this );
+        	
+        	var $this;
+        	
+        	if(opts.mode == MODE_INPUT)
+        		$this = $(this).parent().find('.raterater-input[data-id="'+dataId(this)+'"]');
+        	else
+        		$this = $( this );
+        	
             var id = dataId( $this );
         
             /* Set the width and height of the raterater wrapper and layers
@@ -163,8 +195,12 @@
 
         /* Call the user-defined callback function if it exists
          */
-        if( typeof window[opts.submitFunction] === 'function' );
-            window[opts.submitFunction]( id, stars );
+        
+        if(opts.mode != 'input' && window[opts.submitFunction] !== undefined && typeof window[opts.submitFunction] === 'function')
+        	window[opts.submitFunction]( id, stars );
+        else  
+        	setValue(id, stars);
+        
     }
 
     /* Calculate the number of stars from the x position of the mouse relative to the cover layer
