@@ -77,6 +77,7 @@
 	          */
 	         data[id] = {
 	             state: 'inactive', // inactive, hover, or rated
+	             stars: null,
 	         };
 	        	
 	       
@@ -188,6 +189,7 @@
         /* Set the state to 'rated' to disable functionality
          */
         data[id].state = 'rated';
+        data[id].stars = stars;
 
         /* Add the 'rated' class to the hover layer for additional styling flexibility
          */
@@ -309,22 +311,31 @@
      * This is the callback for the mouseleave event 
      */
     function mouseLeave(e) {
-        var id = dataId( $( e.target ).parent() );
+    	var $this = $( e.target ).parent();
+        var id = dataId( $this );
 
-        /* Leave it alone, we have already rated this item
+        /* hide the hover layer and show the rating layer
          */
-        if( data[id].state === 'rated' ) {
+        $( e.target ).parent().children( '.raterater-hover-layer' ).first().css( 'display', 'none' );
+        $( e.target ).parent().children( '.raterater-rating-layer' ).first().css( 'display','block' );
+        
+        /* Revert to the last rating, since we have already rated this item
+         */
+        if( data[id].state === 'rated' ) {        	
+        	 var rating = parseFloat( data[id].stars );
+             var whole = Math.floor( rating );
+             var partial = rating - whole;
+             hiliteStars (
+                 $this.find( '.raterater-rating-layer' ).first(), 
+                 whole, 
+                 partial );
+             
             return;
         }
 
         /* set the state to 'inactive'
          */
         data[id].state = 'inactive';
-
-        /* hide the hover layer and show the rating layer
-         */
-        $( e.target ).parent().children( '.raterater-hover-layer' ).first().css( 'display', 'none' );
-        $( e.target ).parent().children( '.raterater-rating-layer' ).first().css( 'display','block' );
     }
 
     /* Shorthand function to get the data-id of an element
