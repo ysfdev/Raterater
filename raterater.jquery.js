@@ -77,7 +77,7 @@
 	          */
 	         data[id] = {
 	             state: 'inactive', // inactive, hover, or rated
-	             rating: null,
+	             stars: null,
 	         };
 	        	
 	       
