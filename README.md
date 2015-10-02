@@ -68,6 +68,7 @@ starWidth | 20 | Integer | Width of a star in pixels
 spaceWidth | 5 | Integer | Width of a space between two stars in pixels
 numStars | 5 | Integer | Total number of stars per rating box
 mode | 'callback' | String | Initialzation mode ('callback' or 'input'). Use 'input' to use raterater as form field, or use 'callback' to handle the rating with a custom javascript callback only.
+step | false | Float | Specify step increments for ratings. Float number between 0 and 1, for example if you want to allow only half stars, use 0.5, or whole stars use 1.
 
 ## Styling
 

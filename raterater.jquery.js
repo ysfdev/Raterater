@@ -28,11 +28,21 @@
             numStars: 5,
             isStatic: false,
             mode: MODE_CALLBACK,
+            step: false,
         };
 
         opts = $.extend( {}, $.fn.raterater.defaults, options );
         opts.width = opts.numStars * ( opts.starWidth + opts.spaceWidth ); // total rating div width
         opts.starAspect = 0.9226; // aspect ratio of the font awesome stars
+
+        /* Validate the step option is between 0 and 1 if present
+         */
+        if(opts.step !== false){
+            opts.step = parseFloat(opts.step);
+            if(opts.step <= 0 || opts.step > 1){
+                throw "Error: step must be between 0 and 1";
+            }
+        }
 
         elems = this;
 
@@ -221,6 +231,13 @@
             partial_star = opts.starWidth;
         partial_star /= opts.starWidth;
 
+        /* Round to the nearest step if a step is provided
+         */
+        if(opts.step !== false){
+            var stepInt = 1 / opts.step
+            partial_star = (Math.round(partial_star * stepInt) / stepInt);
+        }
+        
         /* Store our result in the data object
          */
         data[id].whole_stars_hover = whole_stars;
