@@ -59,7 +59,7 @@
 
     function setValue (id,stars){
     	
-    	$('.raterater-input[data-id="'+ id + '"]').data('input').val(stars);   	
+    	$('.raterater-input[data-id="'+ id + '"]').data('input').val(stars).change();   	
     }
     
     function init() {        
