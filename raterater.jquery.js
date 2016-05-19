@@ -208,8 +208,11 @@
         /* Call the user-defined callback function if it exists
          */
         
-        if(opts.mode != 'input' && window[opts.submitFunction] !== undefined && typeof window[opts.submitFunction] === 'function')
-        	window[opts.submitFunction]( id, stars );
+        if(opts.mode != 'input' && ( (opts.submitFunction !== undefined && typeof opts.submitFunction === 'function') || (window[opts.submitFunction] !== undefined && typeof window[opts.submitFunction] === 'function') ))
+        	if ( opts.submitFunction !== undefined && typeof opts.submitFunction === 'function' )
+                opts.submitFunction( id, stars );
+            else
+                window[opts.submitFunction]( id, stars );
         else  
         	setValue(id, stars);
         
