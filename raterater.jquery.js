@@ -133,6 +133,10 @@
             /* Register mouse event callbacks
              */
             if(!opts.isStatic){
+		//handle touch events on mobile browser
+                $this.find( '.raterater-cover-layer' ).on('touchstart', mouseEnter);
+                $this.find( '.raterater-cover-layer' ).on('touchsend', mouseLeave); 
+		    
             	$this.find( '.raterater-cover-layer' ).hover( mouseEnter, mouseLeave );
             	$this.find( '.raterater-cover-layer' ).mousemove( hiliteStarsHover );
             	$this.find( '.raterater-cover-layer' ).click( rate );
